@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
         with:
-          repository: TARGET_ORG/PROJECT_NAME-api
+          repository: shozab-unify-examples/fidelity-api
       - uses: cloudbees-days/setup-kubeconfig
         name: Set kubeconfig
         with:
@@ -31,12 +31,12 @@ jobs:
         uses: cloudbees-io/helm-install@v1
         with:
           chart-location: ${{ cloudbees.workspace }}/chart
-          release-name: PROJECT_NAME-api
+          release-name: fidelity-api
           namespace: ${{ vars.namespace }}
           values: |
             image:
               url: ${{ inputs.artifact-url }}
-            hostname: PROJECT_NAME-api.${{ inputs.environment }}.preview.cb-demos.io
+            hostname: fidelity-api.${{ inputs.environment }}.preview.cb-demos.io
       - name: Register deployed artifact
         uses: cloudbees-io/register-deployed-artifact@v2
         with:
@@ -46,6 +46,6 @@ jobs:
         with:
           content: |-
             ## Deployed environment
-            [Dev frontend](https://PROJECT_NAME-api.${{ inputs.environment }}.preview.cb-demos.io/)
+            [Dev frontend](https://fidelity-api.${{ inputs.environment }}.preview.cb-demos.io/)
             Running ${{ inputs.artifact-url }}
           format: MARKDOWN
