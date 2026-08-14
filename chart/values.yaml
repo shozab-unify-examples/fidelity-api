@@ -1,0 +1,18 @@
+image:
+  url: ""
+  # repository: cloudbees-days/hackers-api
+  # tag: latest
+  pullPolicy: IfNotPresent
+
+hostname: hackers-api.example.com
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+service:
+  port: 8080

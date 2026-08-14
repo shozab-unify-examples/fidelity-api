@@ -1,0 +1,51 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: deploy
+on:
+  workflow_call:
+    inputs:
+      artifact-id:
+        type: string
+        required: true
+      artifact-url:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
+        with:
+          repository: TARGET_ORG/PROJECT_NAME-api
+      - uses: cloudbees-days/setup-kubeconfig
+        name: Set kubeconfig
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - id: install-chart
+        name: Install helm chart
+        uses: cloudbees-io/helm-install@v1
+        with:
+          chart-location: ${{ cloudbees.workspace }}/chart
+          release-name: PROJECT_NAME-api
+          namespace: ${{ vars.namespace }}
+          values: |
+            image:
+              url: ${{ inputs.artifact-url }}
+            hostname: PROJECT_NAME-api.${{ inputs.environment }}.preview.cb-demos.io
+      - name: Register deployed artifact
+        uses: cloudbees-io/register-deployed-artifact@v2
+        with:
+          artifact-id: ${{ inputs.artifact-id }}
+      - name: Publish evidence
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Deployed environment
+            [Dev frontend](https://PROJECT_NAME-api.${{ inputs.environment }}.preview.cb-demos.io/)
+            Running ${{ inputs.artifact-url }}
+          format: MARKDOWN
