@@ -31,11 +31,11 @@ jobs:
             ${{ steps.RunUnitTest.outputs.CODE_COVERAGE }}
           format: MARKDOWN
   build:
-    uses: TARGET_ORG/PROJECT_NAME-workflows/container-build.yaml
+    uses: shozab-unify-examples/fidelity-workflows/container-build.yaml
     vars: inherit
     secrets: inherit
     with:
       appName: hackers-api
       versionStart: "3.0"
-      repo: TARGET_ORG/PROJECT_NAME-api
+      repo: shozab-unify-examples/fidelity-api
     needs: test
